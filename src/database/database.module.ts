@@ -8,7 +8,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
         return {
           type: 'postgres',
           url: process.env.DATABASE_URL,
-          synchronize: true,
+          synchronize: false,
           autoLoadEntities: true,
         };
       },
