@@ -40,3 +40,6 @@ package-lock.json
 
 #postgres
 /postgres_data
+
+#docker
+docker-compose.yml

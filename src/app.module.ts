@@ -5,6 +5,7 @@ import { environments } from './environments';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { PostsModule } from './posts/posts.module';
+import { DatabaseModule } from './database/database.module';
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import { PostsModule } from './posts/posts.module';
       isGlobal: true,
     }),
     PostsModule,
+    DatabaseModule,
   ],
   controllers: [AppController],
   providers: [AppService],
