@@ -1,3 +1,4 @@
+import { Exclude } from 'class-transformer';
 import {
   PrimaryGeneratedColumn,
   Column,
@@ -10,12 +11,16 @@ export class Post {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ type: 'varchar', length: 255, unique: true })
+  @Column({ type: 'varchar', unique: true })
   name: string;
 
-  @Column({ type: 'varchar', length: 255 })
-  image: string;
+  @Column({ type: 'varchar', unique: true })
+  slug: string;
 
+  @Column({ type: 'varchar' })
+  file: string;
+
+  @Exclude()
   @CreateDateColumn({
     name: 'create_at',
     type: 'timestamptz',
@@ -23,6 +28,7 @@ export class Post {
   })
   createAt: Date;
 
+  @Exclude()
   @UpdateDateColumn({
     name: 'update_at',
     type: 'timestamptz',

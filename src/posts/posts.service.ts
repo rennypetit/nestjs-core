@@ -1,9 +1,13 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { CreatePostDto } from './dto/create-post.dto';
-import { UpdatePostDto } from './dto/update-post.dto';
+import { CreatePostDto, UpdatePostDto, FilterPostsDto } from './dto/post.dto';
 import { Post } from './entities/post.entity';
+import { Order } from './oder.model';
 
 @Injectable()
 export class PostsService {
@@ -11,25 +15,74 @@ export class PostsService {
     @InjectRepository(Post) private postsRepository: Repository<Post>,
   ) {}
 
-  async create(createPostDto: CreatePostDto) {
-    return this.postsRepository.create(createPostDto);
+  async create(createPostDto: CreatePostDto): Promise<Post> {
+    const newPost = this.postsRepository.create(createPostDto);
+    const data = await this.findByNameAndSlug(
+      createPostDto.name,
+      createPostDto.slug,
+    );
+    //! si el nombre o slug ya estan declarados
+    if (data) throw new ConflictException(`Name or slug existent`);
+
+    //* si todo sale bien
+    if (!data) return await this.postsRepository.save(newPost);
   }
 
-  async findAll() {
-    return await this.postsRepository.find();
+  async findAll(params?: FilterPostsDto): Promise<object> {
+    const { limit = 10, offset = 0, order = 'DESC' } = params;
+    if (!Order[order])
+      //! si envia un parametro diferente a asc o desc
+      throw new ConflictException(`Only uppercase DESC and ASC`);
+
+    //* si todo sale bien
+    const posts = await this.postsRepository.find({
+      take: limit,
+      skip: offset,
+      order: {
+        id: order,
+      },
+    });
+    const count = await this.postsRepository.count();
+    return { posts, count };
   }
 
-  async findOne(id: number): Promise<Post> {
+  async findOne(id: number) {
     const post = await this.postsRepository.findOne(id);
+    console.log(post);
+    //! si no se encuentra el id
     if (!post) throw new NotFoundException(`Post with ID ${id} not found`);
     return post;
   }
 
-  update(id: number, updatePostDto: UpdatePostDto) {
-    return `This action updates a #${id} post`;
+  async update(id: number, updatePostDto: UpdatePostDto) {
+    const post = await this.postsRepository.findOne(id);
+    //! si el post no existe
+    if (!post) throw new NotFoundException(`Post with ID ${id} not found`);
+
+    const data = await this.findByNameAndSlug(
+      updatePostDto.name,
+      updatePostDto.slug,
+    );
+    //! si el nombre o slug ya estan declarados
+    if (data) throw new ConflictException(`Name or slug existent`);
+
+    //* si todo sale bien
+    this.postsRepository.merge(post, updatePostDto);
+    return this.postsRepository.save(post);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} post`;
+  async remove(id: number) {
+    const post = await this.postsRepository.delete(id);
+    //! si no afecto nada
+    if (post.affected === 0)
+      throw new NotFoundException(`Post with ID ${id} not found`);
+    return post;
+  }
+
+  // functions for validation
+  findByNameAndSlug(name: string, slug: string) {
+    return this.postsRepository.findOne({
+      where: [{ name }, { slug }],
+    });
   }
 }
