@@ -6,12 +6,10 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   ManyToMany,
-  JoinTable,
 } from 'typeorm';
-
-import { Category } from './category.entity';
-@Entity({ name: 'posts' })
-export class Post {
+import { Post } from './post.entity';
+@Entity({ name: 'categories' })
+export class Category {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -43,15 +41,6 @@ export class Post {
   })
   updateAt: Date;
 
-  @ManyToMany(() => Category, (category) => category.posts)
-  @JoinTable({
-    name: 'posts_categories',
-    joinColumn: {
-      name: 'post_id',
-    },
-    inverseJoinColumn: {
-      name: 'category_id',
-    },
-  }) // solo en un lado de la relación de muchos a muchos
-  categories: Category[];
+  @ManyToMany(() => Post, (post) => post.categories)
+  posts: Post[];
 }

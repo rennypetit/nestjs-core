@@ -5,17 +5,20 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { CreatePostDto, UpdatePostDto, FilterPostsDto } from './dto/post.dto';
-import { Post } from './entities/post.entity';
-import { Order } from './oder.model';
+import { CreatePostDto, UpdatePostDto, FilterPostsDto } from '../dto/post.dto';
+import { Post } from '../entities/post.entity';
+import { Order } from '../../general-model/model';
+import { Category } from '../entities/category.entity';
 
 @Injectable()
 export class PostsService {
   constructor(
     @InjectRepository(Post) private postsRepository: Repository<Post>,
+    @InjectRepository(Category)
+    private categoriesRepository: Repository<Category>,
   ) {}
 
-  async create(createPostDto: CreatePostDto): Promise<Post> {
+  async create(createPostDto: CreatePostDto) {
     const newPost = this.postsRepository.create(createPostDto);
     const data = await this.findByNameAndSlug(
       createPostDto.name,
@@ -24,12 +27,19 @@ export class PostsService {
     //! si el nombre o slug ya estan declarados
     if (data) throw new ConflictException(`Name or slug existent`);
 
+    if (createPostDto.categoriesIds) {
+      const categories = await this.categoriesRepository.findByIds(
+        createPostDto.categoriesIds,
+      );
+      newPost.categories = categories;
+    }
+
     //* si todo sale bien
     if (!data) return await this.postsRepository.save(newPost);
   }
 
   async findAll(params?: FilterPostsDto): Promise<object> {
-    const { limit = 10, offset = 0, order = 'DESC' } = params;
+    const { limit = 10, offset = 0, order = 'DESC', publish } = params;
     if (!Order[order])
       //! si envia un parametro diferente a asc o desc
       throw new ConflictException(`Only uppercase DESC and ASC`);
@@ -41,14 +51,17 @@ export class PostsService {
       order: {
         id: order,
       },
+      where: { publish: 'true' },
     });
     const count = await this.postsRepository.count();
     return { posts, count };
   }
 
   async findOne(id: number) {
-    const post = await this.postsRepository.findOne(id);
-    console.log(post);
+    const post = await this.postsRepository.findOne({
+      relations: ['categories'],
+      where: { id },
+    });
     //! si no se encuentra el id
     if (!post) throw new NotFoundException(`Post with ID ${id} not found`);
     return post;

@@ -7,10 +7,10 @@ import {
   IsPositive,
   Min,
   IsBoolean,
-  IsArray,
 } from 'class-validator';
 import { Order } from '../../general-model/model';
-export class CreatePostDto {
+
+export class CreateCategoryDto {
   @IsString()
   @IsNotEmpty()
   @ApiProperty()
@@ -30,15 +30,11 @@ export class CreatePostDto {
   @IsNotEmpty()
   @ApiProperty()
   readonly publish: boolean;
-
-  @IsArray()
-  @IsNotEmpty()
-  @ApiProperty()
-  readonly categoriesIds: number[];
 }
-export class UpdatePostDto extends PartialType(CreatePostDto) {}
 
-export class FilterPostsDto {
+export class UpdateCategoryDto extends PartialType(CreateCategoryDto) {}
+
+export class FilterCategoriesDto {
   @IsOptional()
   @IsPositive()
   limit: number;
