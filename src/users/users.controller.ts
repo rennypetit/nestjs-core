@@ -9,6 +9,7 @@ import {
   ParseIntPipe,
   Query,
 } from '@nestjs/common';
+
 import { UsersService } from './users.service';
 import { CreateUserDto, FilterUsersDto, UpdateUserDto } from './dto/user.dto';
 import { User } from './entities/user.entity';
@@ -21,7 +22,6 @@ export class UsersController {
   create(@Body() createUserDto: CreateUserDto): Promise<User> {
     return this.usersService.create(createUserDto);
   }
-
   @Get()
   findAll(@Query() params: FilterUsersDto): Promise<object> {
     return this.usersService.findAll(params);

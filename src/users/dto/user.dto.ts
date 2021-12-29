@@ -9,7 +9,7 @@ import {
   Min,
   IsBoolean,
 } from 'class-validator';
-import { Order, ROLE } from '../users.model';
+import { Order, Role } from '../users.model';
 export class CreateUserDto {
   @IsString()
   @IsNotEmpty()
@@ -39,7 +39,7 @@ export class CreateUserDto {
 
   @IsNotEmpty()
   @ApiProperty()
-  readonly role: ROLE;
+  readonly role: Role;
 }
 
 export class UpdateUserDto extends PartialType(CreateUserDto) {}

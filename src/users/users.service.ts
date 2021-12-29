@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import * as bcrypt from 'bcrypt';
 
 import { CreateUserDto, UpdateUserDto, FilterUsersDto } from './dto/user.dto';
 import { User } from './entities/user.entity';
@@ -20,6 +21,10 @@ export class UsersService {
     const data = await this.findByEmail(createUserDto.email);
     //! si el email ya  esta declarado
     if (data) throw new ConflictException(`Email existent`);
+
+    //? encriptar password
+    const hashPassword = await bcrypt.hash(newUser.password, 10);
+    newUser.password = hashPassword;
 
     //* si todo sale bien
     return await this.usersRepository.save(newUser);
@@ -61,6 +66,13 @@ export class UsersService {
     const data = await this.findByEmail(updateUserDto.email);
     //! si el email ya  esta declarado
     if (data) throw new ConflictException(`Email existent`);
+
+    if (updateUserDto.password) {
+      //? encriptar password
+      const hashPassword = await bcrypt.hash(user.password, 10);
+      user.password = hashPassword;
+    }
+
     //* si todo sale bien
     this.usersRepository.merge(user, updateUserDto);
     return this.usersRepository.save(user);

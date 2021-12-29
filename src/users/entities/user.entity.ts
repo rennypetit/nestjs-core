@@ -6,7 +6,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { Exclude } from 'class-transformer';
-import { ROLE } from '../users.model';
+import { Role } from '../users.model';
 
 @Entity({ name: 'users' })
 export class User {
@@ -24,10 +24,10 @@ export class User {
 
   @Exclude()
   @Column({ type: 'varchar', length: 255 })
-  password: string; // encript
+  password: string; // encriptar
 
   @Column({ type: 'text' })
-  role: ROLE;
+  role: Role;
 
   @CreateDateColumn({
     name: 'create_at',
