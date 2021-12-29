@@ -9,7 +9,7 @@ import {
   IsBoolean,
   IsArray,
 } from 'class-validator';
-import { Order } from '../../general-model/model';
+import { Order } from '../posts.model';
 export class CreatePostDto {
   @IsString()
   @IsNotEmpty()

@@ -5,10 +5,11 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+
 import { CreatePostDto, UpdatePostDto, FilterPostsDto } from '../dto/post.dto';
 import { Post } from '../entities/post.entity';
-import { Order } from '../../general-model/model';
 import { Category } from '../entities/category.entity';
+import { Order } from '../posts.model';
 
 @Injectable()
 export class PostsService {

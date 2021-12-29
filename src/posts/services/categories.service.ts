@@ -5,13 +5,14 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+
 import {
   CreateCategoryDto,
   UpdateCategoryDto,
   FilterCategoriesDto,
 } from '../dto/category.dto';
 import { Category } from '../entities/category.entity';
-import { Order } from '../../general-model/model';
+import { Order } from '../posts.model';
 
 @Injectable()
 export class CategoriesService {
