@@ -11,14 +11,14 @@ import {
 } from '@nestjs/common';
 import { PostsService } from '../services/posts.service';
 import { CreatePostDto, UpdatePostDto, FilterPostsDto } from '../dto/post.dto';
-import { Post as Entradas } from '../entities/post.entity';
+import { Post as PostEntity } from '../entities/post.entity';
 
 @Controller('posts')
 export class PostsController {
   constructor(private readonly postsService: PostsService) {}
 
   @Post()
-  create(@Body() createPostDto: CreatePostDto) {
+  create(@Body() createPostDto: CreatePostDto): Promise<PostEntity> {
     return this.postsService.create(createPostDto);
   }
 
@@ -27,7 +27,7 @@ export class PostsController {
     return this.postsService.findAll(params);
   }
   @Get(':id')
-  findOne(@Param('id', ParseIntPipe) id: number) {
+  findOne(@Param('id', ParseIntPipe) id: number): Promise<PostEntity> {
     return this.postsService.findOne(id);
   }
 
@@ -35,7 +35,7 @@ export class PostsController {
   update(
     @Param('id', ParseIntPipe) id: number,
     @Body() updatePostDto: UpdatePostDto,
-  ) {
+  ): Promise<PostEntity> {
     return this.postsService.update(id, updatePostDto);
   }
 

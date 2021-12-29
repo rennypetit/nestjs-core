@@ -36,7 +36,7 @@ export class PostsService {
     }
 
     //* si todo sale bien
-    if (!data) return await this.postsRepository.save(newPost);
+    return await this.postsRepository.save(newPost);
   }
 
   async findAll(params?: FilterPostsDto): Promise<object> {
@@ -65,6 +65,7 @@ export class PostsService {
     });
     //! si no se encuentra el id
     if (!post) throw new NotFoundException(`Post with ID ${id} not found`);
+    //* si todo esta bien
     return post;
   }
 
@@ -90,6 +91,7 @@ export class PostsService {
     //! si no afecto nada
     if (post.affected === 0)
       throw new NotFoundException(`Post with ID ${id} not found`);
+    //* all ok
     return post;
   }
 

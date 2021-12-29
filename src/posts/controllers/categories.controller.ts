@@ -31,7 +31,7 @@ export class CategoriesController {
     return this.categoriesService.findAll(params);
   }
   @Get(':id')
-  findOne(@Param('id', ParseIntPipe) id: number) {
+  findOne(@Param('id', ParseIntPipe) id: number): Promise<Category> {
     return this.categoriesService.findOne(id);
   }
 
@@ -39,7 +39,7 @@ export class CategoriesController {
   update(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateCategoryDto: UpdateCategoryDto,
-  ) {
+  ): Promise<Category> {
     return this.categoriesService.update(id, updateCategoryDto);
   }
 
