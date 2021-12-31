@@ -16,20 +16,6 @@ export class UsersService {
     @InjectRepository(User) private usersRepository: Repository<User>,
   ) {}
 
-  async create(createUserDto: CreateUserDto) {
-    const newUser = this.usersRepository.create(createUserDto);
-    const data = await this.findByEmail(createUserDto.email);
-    //! si el email ya  esta declarado
-    if (data) throw new ConflictException(`Email existent`);
-
-    //? encriptar password
-    const hashPassword = await bcrypt.hash(newUser.password, 10);
-    newUser.password = hashPassword;
-
-    //* si todo sale bien
-    return await this.usersRepository.save(newUser);
-  }
-
   async findAll(params?: FilterUsersDto): Promise<object> {
     const { limit = 10, offset = 0, order = 'DESC' } = params;
     if (!Order[order])
@@ -48,7 +34,7 @@ export class UsersService {
     return { users, count };
   }
 
-  async findOne(id: number) {
+  async findOne(id: number): Promise<User> {
     const user = await this.usersRepository.findOne({
       where: { id },
     });
@@ -58,7 +44,21 @@ export class UsersService {
     return user;
   }
 
-  async update(id: number, updateUserDto: UpdateUserDto) {
+  async create(createUserDto: CreateUserDto) {
+    const newUser = this.usersRepository.create(createUserDto);
+    const data = await this.findByEmail(createUserDto.email);
+    //! si el email ya  esta declarado
+    if (data) throw new ConflictException(`Email existent`);
+
+    //? encriptar password
+    const hashPassword = await bcrypt.hash(newUser.password, 10);
+    newUser.password = hashPassword;
+
+    //* si todo sale bien
+    return await this.usersRepository.save(newUser);
+  }
+
+  async update(id: number, updateUserDto: UpdateUserDto): Promise<User> {
     const user = await this.usersRepository.findOne(id);
     //! si el user no existe
     if (!user) throw new NotFoundException(`Post with ID ${id} not found`);
@@ -78,7 +78,7 @@ export class UsersService {
     return this.usersRepository.save(user);
   }
 
-  async remove(id: number) {
+  async remove(id: number): Promise<any> {
     const user = await this.usersRepository.delete(id);
     //! si no afecto nada
     if (user.affected === 0)
@@ -88,7 +88,7 @@ export class UsersService {
   }
 
   // functions for validation
-  findByEmail(email: string) {
+  findByEmail(email: string): Promise<User> {
     return this.usersRepository.findOne({
       where: { email },
     });

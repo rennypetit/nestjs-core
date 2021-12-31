@@ -21,19 +21,6 @@ export class CategoriesService {
     private categoriesRepository: Repository<Category>,
   ) {}
 
-  async create(createCategoryDto: CreateCategoryDto): Promise<Category> {
-    const newCategory = this.categoriesRepository.create(createCategoryDto);
-    const data = await this.findByNameAndSlug(
-      createCategoryDto.name,
-      createCategoryDto.slug,
-    );
-    //! si el nombre o slug ya estan declarados
-    if (data) throw new ConflictException(`Name or slug existent`);
-
-    //* si todo sale bien
-    if (!data) return await this.categoriesRepository.save(newCategory);
-  }
-
   async findAll(params?: FilterCategoriesDto): Promise<object> {
     const { limit = 10, offset = 0, order = 'DESC', publish } = params;
     if (!Order[order])
@@ -64,6 +51,19 @@ export class CategoriesService {
     return Category;
   }
 
+  async create(createCategoryDto: CreateCategoryDto): Promise<Category> {
+    const newCategory = this.categoriesRepository.create(createCategoryDto);
+    const data = await this.findByNameAndSlug(
+      createCategoryDto.name,
+      createCategoryDto.slug,
+    );
+    //! si el nombre o slug ya estan declarados
+    if (data) throw new ConflictException(`Name or slug existent`);
+
+    //* si todo sale bien
+    if (!data) return await this.categoriesRepository.save(newCategory);
+  }
+
   async update(id: number, updateCategoryDto: UpdateCategoryDto) {
     const Category = await this.categoriesRepository.findOne(id);
     //! si el Category no existe
@@ -82,7 +82,7 @@ export class CategoriesService {
     return this.categoriesRepository.save(Category);
   }
 
-  async remove(id: number) {
+  async remove(id: number): Promise<any> {
     const Category = await this.categoriesRepository.delete(id);
     //! si no afecto nada
     if (Category.affected === 0)

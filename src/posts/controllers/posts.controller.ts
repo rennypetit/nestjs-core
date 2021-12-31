@@ -11,14 +11,15 @@ import {
   UseGuards,
 } from '@nestjs/common';
 
-import { PostsService } from '../services/posts.service';
 import { CreatePostDto, UpdatePostDto, FilterPostsDto } from '../dto/post.dto';
 import { Post as PostEntity } from '../entities/post.entity';
+import { PostsService } from '../services/posts.service';
+import { Role } from '../../users/users.model';
+
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { Public } from 'src/auth/decorators/public.decorator';
 import { Roles } from 'src/auth/decorators/roles.decorator';
-import { Role } from '../../users/users.model';
 
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('posts')
@@ -43,6 +44,7 @@ export class PostsController {
     return this.postsService.create(createPostDto);
   }
 
+  @Roles(Role.ADMIN, Role.COLLABORATOR, Role.EDITOR)
   @Patch(':id')
   update(
     @Param('id', ParseIntPipe) id: number,
@@ -51,8 +53,9 @@ export class PostsController {
     return this.postsService.update(id, updatePostDto);
   }
 
+  @Roles(Role.ADMIN, Role.COLLABORATOR, Role.EDITOR)
   @Delete(':id')
-  remove(@Param('id', ParseIntPipe) id: number) {
+  remove(@Param('id', ParseIntPipe) id: number): Promise<PostEntity> {
     return this.postsService.remove(id);
   }
 }

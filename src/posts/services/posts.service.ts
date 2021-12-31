@@ -19,26 +19,6 @@ export class PostsService {
     private categoriesRepository: Repository<Category>,
   ) {}
 
-  async create(createPostDto: CreatePostDto) {
-    const newPost = this.postsRepository.create(createPostDto);
-    const data = await this.findByNameAndSlug(
-      createPostDto.name,
-      createPostDto.slug,
-    );
-    //! si el nombre o slug ya estan declarados
-    if (data) throw new ConflictException(`Name or slug existent`);
-
-    if (createPostDto.categoriesIds) {
-      const categories = await this.categoriesRepository.findByIds(
-        createPostDto.categoriesIds,
-      );
-      newPost.categories = categories;
-    }
-
-    //* si todo sale bien
-    return await this.postsRepository.save(newPost);
-  }
-
   async findAll(params?: FilterPostsDto): Promise<object> {
     const { limit = 10, offset = 0, order = 'DESC', publish } = params;
     if (!Order[order])
@@ -58,7 +38,7 @@ export class PostsService {
     return { posts, count };
   }
 
-  async findOne(id: number) {
+  async findOne(id: number): Promise<Post> {
     const post = await this.postsRepository.findOne({
       relations: ['categories'],
       where: { id },
@@ -68,8 +48,27 @@ export class PostsService {
     //* si todo esta bien
     return post;
   }
+  async create(createPostDto: CreatePostDto): Promise<Post> {
+    const newPost = this.postsRepository.create(createPostDto);
+    const data = await this.findByNameAndSlug(
+      createPostDto.name,
+      createPostDto.slug,
+    );
+    //! si el nombre o slug ya estan declarados
+    if (data) throw new ConflictException(`Name or slug existent`);
 
-  async update(id: number, updatePostDto: UpdatePostDto) {
+    if (createPostDto.categoriesIds) {
+      const categories = await this.categoriesRepository.findByIds(
+        createPostDto.categoriesIds,
+      );
+      newPost.categories = categories;
+    }
+
+    //* si todo sale bien
+    return await this.postsRepository.save(newPost);
+  }
+
+  async update(id: number, updatePostDto: UpdatePostDto): Promise<Post> {
     const post = await this.postsRepository.findOne(id);
     //! si el post no existe
     if (!post) throw new NotFoundException(`Post with ID ${id} not found`);
@@ -86,7 +85,7 @@ export class PostsService {
     return this.postsRepository.save(post);
   }
 
-  async remove(id: number) {
+  async remove(id: number): Promise<any> {
     const post = await this.postsRepository.delete(id);
     //! si no afecto nada
     if (post.affected === 0)
@@ -96,7 +95,7 @@ export class PostsService {
   }
 
   // functions for validation
-  findByNameAndSlug(name: string, slug: string) {
+  findByNameAndSlug(name: string, slug: string): Promise<object> {
     return this.postsRepository.findOne({
       where: [{ name }, { slug }],
     });
