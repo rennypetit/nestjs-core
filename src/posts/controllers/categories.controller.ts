@@ -45,6 +45,7 @@ export class CategoriesController {
   @Roles(Role.ADMIN, Role.COLLABORATOR, Role.EDITOR)
   @Post()
   create(@Body() createCategoryDto: CreateCategoryDto): Promise<Category> {
+    console.log(JwtAuthGuard);
     return this.categoriesService.create(createCategoryDto);
   }
 
