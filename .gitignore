@@ -45,4 +45,4 @@ package-lock.json
 #docker
 docker-compose.yml
 
-/migrations
+src/database/migrations/

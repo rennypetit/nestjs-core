@@ -30,6 +30,11 @@ export class CreateCategoryDto {
   @IsNotEmpty()
   @ApiProperty()
   readonly publish: boolean;
+
+  @IsPositive()
+  @IsNotEmpty()
+  @ApiProperty()
+  readonly userId: number;
 }
 
 export class UpdateCategoryDto extends PartialType(CreateCategoryDto) {}

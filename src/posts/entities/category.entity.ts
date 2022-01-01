@@ -1,4 +1,5 @@
 import { Exclude } from 'class-transformer';
+import { User } from 'src/users/entities/user.entity';
 import {
   PrimaryGeneratedColumn,
   Column,
@@ -6,6 +7,8 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   ManyToMany,
+  ManyToOne,
+  JoinColumn,
 } from 'typeorm';
 import { Post } from './post.entity';
 @Entity({ name: 'categories' })
@@ -43,4 +46,8 @@ export class Category {
 
   @ManyToMany(() => Post, (post) => post.categories)
   posts: Post[];
+
+  @ManyToOne(() => User, (user) => user.posts)
+  @JoinColumn({ name: 'user_id' })
+  user: User;
 }

@@ -12,6 +12,7 @@ import {
   FilterCategoriesDto,
 } from '../dto/category.dto';
 import { Category } from '../entities/category.entity';
+import { User } from 'src/users/entities/user.entity';
 import { Order } from '../posts.model';
 
 @Injectable()
@@ -19,6 +20,8 @@ export class CategoriesService {
   constructor(
     @InjectRepository(Category)
     private categoriesRepository: Repository<Category>,
+    @InjectRepository(User)
+    private usersRepository: Repository<User>,
   ) {}
 
   async findAll(params?: FilterCategoriesDto): Promise<object> {
@@ -42,7 +45,7 @@ export class CategoriesService {
 
   async findOne(id: number) {
     const Category = await this.categoriesRepository.findOne({
-      relations: ['posts'],
+      relations: ['posts', 'user'],
       where: { id },
     });
     //! si no se encuentra el id
@@ -59,6 +62,12 @@ export class CategoriesService {
     );
     //! si el nombre o slug ya estan declarados
     if (data) throw new ConflictException(`Name or slug existent`);
+
+    // relación user - post
+    if (createCategoryDto.userId) {
+      const user = await this.usersRepository.findOne(createCategoryDto.userId);
+      newCategory.user = user;
+    }
 
     //* si todo sale bien
     if (!data) return await this.categoriesRepository.save(newCategory);
