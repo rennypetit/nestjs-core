@@ -7,9 +7,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 import { CreatePostDto, UpdatePostDto, FilterPostsDto } from '../dto/post.dto';
+import { Order } from '../posts.model';
 import { Post } from '../entities/post.entity';
 import { Category } from '../entities/category.entity';
-import { Order } from '../posts.model';
+import { User } from 'src/users/entities/user.entity';
 
 @Injectable()
 export class PostsService {
@@ -17,6 +18,8 @@ export class PostsService {
     @InjectRepository(Post) private postsRepository: Repository<Post>,
     @InjectRepository(Category)
     private categoriesRepository: Repository<Category>,
+    @InjectRepository(User)
+    private usersRepository: Repository<User>,
   ) {}
 
   async findAll(params?: FilterPostsDto): Promise<object> {
@@ -40,8 +43,7 @@ export class PostsService {
 
   async findOne(id: number): Promise<Post> {
     const post = await this.postsRepository.findOne({
-      relations: ['categories'],
-      where: { id },
+      relations: ['user', 'categories'],
     });
     //! si no se encuentra el id
     if (!post) throw new NotFoundException(`Post with ID ${id} not found`);
@@ -57,11 +59,17 @@ export class PostsService {
     //! si el nombre o slug ya estan declarados
     if (data) throw new ConflictException(`Name or slug existent`);
 
+    // relación categories - post
     if (createPostDto.categoriesIds) {
       const categories = await this.categoriesRepository.findByIds(
         createPostDto.categoriesIds,
       );
       newPost.categories = categories;
+    }
+    // relación user - post
+    if (createPostDto.userId) {
+      const user = await this.usersRepository.findOne(createPostDto.userId);
+      newPost.user = user;
     }
 
     //* si todo sale bien

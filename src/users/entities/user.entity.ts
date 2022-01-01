@@ -4,8 +4,10 @@ import {
   Entity,
   CreateDateColumn,
   UpdateDateColumn,
+  OneToMany,
 } from 'typeorm';
 import { Exclude } from 'class-transformer';
+import { Post } from '../../posts/entities/post.entity';
 import { Role } from '../users.model';
 
 @Entity({ name: 'users' })
@@ -42,4 +44,7 @@ export class User {
     default: () => 'CURRENT_TIMESTAMP',
   })
   updateAt: Date;
+
+  @OneToMany(() => Post, (post) => post.user)
+  posts: Post[];
 }

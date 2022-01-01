@@ -7,9 +7,12 @@ import {
   UpdateDateColumn,
   ManyToMany,
   JoinTable,
+  ManyToOne,
+  JoinColumn,
 } from 'typeorm';
 
 import { Category } from './category.entity';
+import { User } from '../../users/entities/user.entity';
 @Entity({ name: 'posts' })
 export class Post {
   @PrimaryGeneratedColumn()
@@ -54,4 +57,8 @@ export class Post {
     },
   }) // solo en un lado de la relación de muchos a muchos
   categories: Category[];
+
+  @ManyToOne(() => User, (user) => user.posts)
+  @JoinColumn({ name: 'user_id' })
+  user: User;
 }

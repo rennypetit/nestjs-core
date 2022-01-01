@@ -35,6 +35,11 @@ export class CreatePostDto {
   @IsNotEmpty()
   @ApiProperty()
   readonly categoriesIds: number[];
+
+  @IsPositive()
+  @IsNotEmpty()
+  @ApiProperty()
+  readonly userId: number;
 }
 export class UpdatePostDto extends PartialType(CreatePostDto) {}
 
