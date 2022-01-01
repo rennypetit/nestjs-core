@@ -22,6 +22,7 @@ export class RolesGuard implements CanActivate {
   ) {}
 
   async findUser(id: number) {
+    // se busca el role en el usuario
     return await this.usersRepository.findOne(id);
   }
 
@@ -31,16 +32,15 @@ export class RolesGuard implements CanActivate {
     // roles son los que se declaran en el controlador manualmente
     const roles = this.reflector.get<Role[]>(ROLES_KEY, context.getHandler());
     // [admin,editor ...]
-    if (!roles) return true; // si no tiene roles dejarlo pasar
+    if (!roles) return true; // si no tiene roles dejarlo pasar ya que seria método get
 
     const request = context.switchToHttp().getRequest();
     const token = request.user as PayloadToken;
-    console.log(token);
 
     //? buscar el id por el token así no enviamos el role en el id
     return this.findUser(token.sub)
       .then((user) => {
-        // {role: 'admin', sub: 1}
+        // se busca si el rol que tiene es el adecuado
         const isAuth = roles.some((role) => role === user.role);
         if (!isAuth) throw new UnauthorizedException('you role is wrong');
         return true;
