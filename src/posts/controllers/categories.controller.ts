@@ -67,10 +67,16 @@ export class CategoriesController {
   @Post()
   create(
     @Body() createCategoryDto: CreateCategoryDto,
+    @Body('publish', ParseBoolPipe) publish: boolean,
+    // se parara el publish para tener el boolean propio
     @Req() request,
   ): Promise<Category> {
     // se obtiene el user sub que es el id por el token
-    return this.categoriesService.create(createCategoryDto, request.user.sub);
+    return this.categoriesService.create(
+      createCategoryDto,
+      publish,
+      request.user.sub,
+    );
   }
 
   @Roles(Role.ADMIN, Role.EDITOR)
@@ -78,12 +84,15 @@ export class CategoriesController {
   update(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateCategoryDto: UpdateCategoryDto,
+    @Body('publish', ParseBoolPipe) publish: boolean,
+    // se parara el publish para tener el boolean propio
     @Req() request,
   ): Promise<Category> {
     // se obtiene el user sub que es el id por el token
     return this.categoriesService.update(
       id,
       updateCategoryDto,
+      publish,
       request.user.sub,
     );
   }

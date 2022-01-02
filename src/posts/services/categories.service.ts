@@ -68,6 +68,7 @@ export class CategoriesService {
 
   async create(
     createCategoryDto: CreateCategoryDto,
+    publish: boolean,
     userId: number,
   ): Promise<Category> {
     const newCategory = this.categoriesRepository.create(createCategoryDto);
@@ -84,6 +85,9 @@ export class CategoriesService {
       newCategory.user = user;
     } else throw new ConflictException(`userId no valid`);
 
+    // se implementa esto para que se puede leer la propiedad boolean de manera correcta
+    newCategory.publish = publish;
+
     //* si todo sale bien
     return await this.categoriesRepository.save(newCategory);
   }
@@ -91,6 +95,7 @@ export class CategoriesService {
   async update(
     id: number,
     updateCategoryDto: UpdateCategoryDto,
+    publish: boolean,
     userId: number,
   ) {
     const Category = await this.categoriesRepository.findOne(id);
@@ -110,6 +115,9 @@ export class CategoriesService {
       const user = await this.usersRepository.findOne(userId);
       Category.user = user;
     } else throw new ConflictException(`userId no valid`);
+
+    // se implementa esto para que se puede leer la propiedad boolean de manera correcta
+    Category.publish = publish;
 
     //* si todo sale bien
     this.categoriesRepository.merge(Category, updateCategoryDto);
