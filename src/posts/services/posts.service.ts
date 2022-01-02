@@ -2,6 +2,7 @@ import {
   ConflictException,
   Injectable,
   NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -22,11 +23,18 @@ export class PostsService {
     private usersRepository: Repository<User>,
   ) {}
 
-  async findAll(params?: FilterPostsDto): Promise<object> {
+  async findAll(
+    params?: FilterPostsDto,
+    publish = true, // si no es admin no puede ver los borradores
+    admin = false, // para saber si esta en el dashboard o no
+  ): Promise<object> {
     const { limit = 10, offset = 0, order = 'DESC' } = params;
     if (!Order[order])
-      //! si envia un parametro diferente a asc o desc
+      //! si enviá un parámetro diferente a asc o desc
       throw new ConflictException(`Only uppercase DESC and ASC`);
+
+    //! si la persona no es admin no puede ver post en borradores
+    if (!admin) publish = true;
 
     //* si todo sale bien
     const posts = await this.postsRepository.find({
@@ -35,23 +43,31 @@ export class PostsService {
       order: {
         id: order,
       },
-      where: { publish: 'true' },
+      where: { publish },
     });
     const count = await this.postsRepository.count();
     return { posts, count };
   }
 
-  async findOne(id: number): Promise<Post> {
+  async findOne(id: number, admin = false): Promise<Post> {
     const post = await this.postsRepository.findOne({
       relations: ['user', 'categories'],
       where: { id },
     });
     //! si no se encuentra el id
     if (!post) throw new NotFoundException(`Post with ID ${id} not found`);
+    //! si la persona no es admin no puede ver post en borrador
+
+    if (!post.publish && admin === false) throw new UnauthorizedException();
+
     //* si todo esta bien
     return post;
   }
-  async create(createPostDto: CreatePostDto, userId: number): Promise<Post> {
+  async create(
+    createPostDto: CreatePostDto,
+    publish: boolean,
+    userId: number,
+  ): Promise<Post> {
     const newPost = this.postsRepository.create(createPostDto);
     const data = await this.findByNameAndSlug(
       createPostDto.name,
@@ -75,13 +91,16 @@ export class PostsService {
     } else throw new ConflictException(`userId no valid`);
 
     //* si todo sale bien
-    console.log(newPost);
+    // se implementa esto para que se puede leer la propiedad boolean de manera correcta
+    newPost.publish = publish;
+
     return await this.postsRepository.save(newPost);
   }
 
   async update(
     id: number,
     updatePostDto: UpdatePostDto,
+    publish: boolean,
     userId: number,
   ): Promise<Post> {
     const post = await this.postsRepository.findOne(id);
@@ -108,6 +127,9 @@ export class PostsService {
       const user = await this.usersRepository.findOne(userId);
       post.user = user;
     } else throw new ConflictException(`userId no valid`);
+
+    // se implementa esto para que se puede leer la propiedad boolean de manera correcta
+    post.publish = publish;
 
     //* si todo sale bien
     this.postsRepository.merge(post, updatePostDto);

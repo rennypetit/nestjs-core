@@ -6,6 +6,7 @@ import {
   IsOptional,
   IsPositive,
   Min,
+  IsBoolean,
   IsArray,
 } from 'class-validator';
 import { Order } from '../posts.model';
@@ -25,7 +26,10 @@ export class CreatePostDto {
   @ApiProperty()
   readonly file: string;
 
-  // readonly publish: boolean; se coloco como un campo aparte para poder filtrarlo
+  @IsBoolean()
+  @IsNotEmpty()
+  @ApiProperty()
+  readonly publish: boolean;
 
   @IsArray()
   @IsNotEmpty()
@@ -46,4 +50,8 @@ export class FilterPostsDto {
   @IsOptional()
   @IsString()
   order: Order;
+
+  @IsOptional()
+  @IsBoolean()
+  publish: boolean;
 }
