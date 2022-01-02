@@ -39,14 +39,16 @@ export class RolesGuard implements CanActivate {
 
     //? buscar el id por el token así no enviamos el role en el id
     return this.findUser(token.sub)
-      .then((user) => {
+      .then(({ role: userRole }) => {
         // se busca si el rol que tiene es el adecuado
-        const isAuth = roles.some((role) => role === user.role);
+        const isAuth = roles.some((role) => role === userRole);
         if (!isAuth) throw new UnauthorizedException('you role is wrong');
-        return true;
+        return isAuth;
       })
       .catch(() => {
         return false;
       });
   }
 }
+
+// request['dataToken'] = { id, role: userRole }; para insertar data en el request no se esta utilizando es solo ejemplo

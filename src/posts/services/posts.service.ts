@@ -44,13 +44,14 @@ export class PostsService {
   async findOne(id: number): Promise<Post> {
     const post = await this.postsRepository.findOne({
       relations: ['user', 'categories'],
+      where: { id },
     });
     //! si no se encuentra el id
     if (!post) throw new NotFoundException(`Post with ID ${id} not found`);
     //* si todo esta bien
     return post;
   }
-  async create(createPostDto: CreatePostDto): Promise<Post> {
+  async create(createPostDto: CreatePostDto, userId: number): Promise<Post> {
     const newPost = this.postsRepository.create(createPostDto);
     const data = await this.findByNameAndSlug(
       createPostDto.name,
@@ -66,17 +67,23 @@ export class PostsService {
       );
       newPost.categories = categories;
     }
+
     // relación user - post
-    if (createPostDto.userId) {
-      const user = await this.usersRepository.findOne(createPostDto.userId);
+    if (typeof userId === 'number') {
+      const user = await this.usersRepository.findOne(userId);
       newPost.user = user;
-    }
+    } else throw new ConflictException(`userId no valid`);
 
     //* si todo sale bien
+    console.log(newPost);
     return await this.postsRepository.save(newPost);
   }
 
-  async update(id: number, updatePostDto: UpdatePostDto): Promise<Post> {
+  async update(
+    id: number,
+    updatePostDto: UpdatePostDto,
+    userId: number,
+  ): Promise<Post> {
     const post = await this.postsRepository.findOne(id);
     //! si el post no existe
     if (!post) throw new NotFoundException(`Post with ID ${id} not found`);
@@ -87,6 +94,20 @@ export class PostsService {
     );
     //! si el nombre o slug ya estan declarados
     if (data) throw new ConflictException(`Name or slug existent`);
+
+    // relación categories - post
+    if (updatePostDto.categoriesIds) {
+      const categories = await this.categoriesRepository.findByIds(
+        updatePostDto.categoriesIds,
+      );
+      post.categories = categories;
+    }
+
+    // relación user - post
+    if (typeof userId === 'number') {
+      const user = await this.usersRepository.findOne(userId);
+      post.user = user;
+    } else throw new ConflictException(`userId no valid`);
 
     //* si todo sale bien
     this.postsRepository.merge(post, updatePostDto);

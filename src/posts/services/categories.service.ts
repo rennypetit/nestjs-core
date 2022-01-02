@@ -27,7 +27,7 @@ export class CategoriesService {
   async findAll(params?: FilterCategoriesDto): Promise<object> {
     const { limit = 10, offset = 0, order = 'DESC', publish } = params;
     if (!Order[order])
-      //! si envia un parametro diferente a asc o desc
+      //! si enviá un parámetro diferente a asc o desc
       throw new ConflictException(`Only uppercase DESC and ASC`);
 
     //* si todo sale bien
@@ -54,26 +54,33 @@ export class CategoriesService {
     return Category;
   }
 
-  async create(createCategoryDto: CreateCategoryDto): Promise<Category> {
+  async create(
+    createCategoryDto: CreateCategoryDto,
+    userId: number,
+  ): Promise<Category> {
     const newCategory = this.categoriesRepository.create(createCategoryDto);
     const data = await this.findByNameAndSlug(
       createCategoryDto.name,
       createCategoryDto.slug,
     );
-    //! si el nombre o slug ya estan declarados
+    //! si el nombre o slug ya están declarados
     if (data) throw new ConflictException(`Name or slug existent`);
 
-    // relación user - post
-    if (createCategoryDto.userId) {
-      const user = await this.usersRepository.findOne(createCategoryDto.userId);
+    // relación user - categories
+    if (typeof userId === 'number') {
+      const user = await this.usersRepository.findOne(userId);
       newCategory.user = user;
-    }
+    } else throw new ConflictException(`userId no valid`);
 
     //* si todo sale bien
-    if (!data) return await this.categoriesRepository.save(newCategory);
+    return await this.categoriesRepository.save(newCategory);
   }
 
-  async update(id: number, updateCategoryDto: UpdateCategoryDto) {
+  async update(
+    id: number,
+    updateCategoryDto: UpdateCategoryDto,
+    userId: number,
+  ) {
     const Category = await this.categoriesRepository.findOne(id);
     //! si el Category no existe
     if (!Category)
@@ -83,8 +90,14 @@ export class CategoriesService {
       updateCategoryDto.name,
       updateCategoryDto.slug,
     );
-    //! si el nombre o slug ya estan declarados
+    //! si el nombre o slug ya están declarados
     if (data) throw new ConflictException(`Name or slug existent`);
+
+    // relación user - categories
+    if (typeof userId === 'number') {
+      const user = await this.usersRepository.findOne(userId);
+      Category.user = user;
+    } else throw new ConflictException(`userId no valid`);
 
     //* si todo sale bien
     this.categoriesRepository.merge(Category, updateCategoryDto);

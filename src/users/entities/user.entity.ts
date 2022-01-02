@@ -32,6 +32,7 @@ export class User {
   @Column({ type: 'text' })
   role: Role;
 
+  @Exclude()
   @CreateDateColumn({
     name: 'create_at',
     type: 'timestamptz',
@@ -39,6 +40,7 @@ export class User {
   })
   createAt: Date;
 
+  @Exclude()
   @UpdateDateColumn({
     name: 'update_at',
     type: 'timestamptz',

@@ -9,6 +9,7 @@ import {
   ParseIntPipe,
   Query,
   UseGuards,
+  Req,
 } from '@nestjs/common';
 
 import { CreatePostDto, UpdatePostDto, FilterPostsDto } from '../dto/post.dto';
@@ -40,8 +41,12 @@ export class PostsController {
 
   @Roles(Role.ADMIN, Role.COLLABORATOR, Role.EDITOR)
   @Post()
-  create(@Body() createPostDto: CreatePostDto): Promise<PostEntity> {
-    return this.postsService.create(createPostDto);
+  create(
+    @Body() createPostDto: CreatePostDto,
+    @Req() request,
+  ): Promise<PostEntity> {
+    // se obtiene el user sub que es el id por el token
+    return this.postsService.create(createPostDto, request.user.sub);
   }
 
   @Roles(Role.ADMIN, Role.COLLABORATOR, Role.EDITOR)
@@ -49,8 +54,10 @@ export class PostsController {
   update(
     @Param('id', ParseIntPipe) id: number,
     @Body() updatePostDto: UpdatePostDto,
+    @Req() request,
   ): Promise<PostEntity> {
-    return this.postsService.update(id, updatePostDto);
+    // se obtiene el user sub que es el id por el token
+    return this.postsService.update(id, updatePostDto, request.user.sub);
   }
 
   @Roles(Role.ADMIN, Role.COLLABORATOR, Role.EDITOR)

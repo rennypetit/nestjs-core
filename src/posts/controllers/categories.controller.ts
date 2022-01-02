@@ -9,6 +9,7 @@ import {
   ParseIntPipe,
   Query,
   UseGuards,
+  Req,
 } from '@nestjs/common';
 
 import {
@@ -44,9 +45,12 @@ export class CategoriesController {
 
   @Roles(Role.ADMIN, Role.COLLABORATOR, Role.EDITOR)
   @Post()
-  create(@Body() createCategoryDto: CreateCategoryDto): Promise<Category> {
-    console.log(JwtAuthGuard);
-    return this.categoriesService.create(createCategoryDto);
+  create(
+    @Body() createCategoryDto: CreateCategoryDto,
+    @Req() request,
+  ): Promise<Category> {
+    // se obtiene el user sub que es el id por el token
+    return this.categoriesService.create(createCategoryDto, request.user.sub);
   }
 
   @Roles(Role.ADMIN, Role.COLLABORATOR, Role.EDITOR)
@@ -54,8 +58,14 @@ export class CategoriesController {
   update(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateCategoryDto: UpdateCategoryDto,
+    @Req() request,
   ): Promise<Category> {
-    return this.categoriesService.update(id, updateCategoryDto);
+    // se obtiene el user sub que es el id por el token
+    return this.categoriesService.update(
+      id,
+      updateCategoryDto,
+      request.user.sub,
+    );
   }
 
   @Roles(Role.ADMIN, Role.COLLABORATOR, Role.EDITOR)
