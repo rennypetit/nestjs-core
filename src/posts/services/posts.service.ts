@@ -23,7 +23,7 @@ export class PostsService {
   ) {}
 
   async findAll(params?: FilterPostsDto): Promise<object> {
-    const { limit = 10, offset = 0, order = 'DESC', publish } = params;
+    const { limit = 10, offset = 0, order = 'DESC' } = params;
     if (!Order[order])
       //! si envia un parametro diferente a asc o desc
       throw new ConflictException(`Only uppercase DESC and ASC`);

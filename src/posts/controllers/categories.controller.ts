@@ -10,6 +10,7 @@ import {
   Query,
   UseGuards,
   Req,
+  ParseBoolPipe,
 } from '@nestjs/common';
 
 import {
@@ -32,15 +33,34 @@ export class CategoriesController {
   constructor(private readonly categoriesService: CategoriesService) {}
 
   @Public()
-  @Get()
-  findAll(@Query() params: FilterCategoriesDto): Promise<object> {
+  @Get('/public')
+  findAllPublic(@Query() params: FilterCategoriesDto): Promise<object> {
     return this.categoriesService.findAll(params);
   }
 
   @Public()
+  @Get('/public/:id')
+  findOnePublic(@Param('id', ParseIntPipe) id: number): Promise<Category> {
+    return this.categoriesService.findOne(id);
+  }
+
+  //? ALL ADMIN DASHBOARD
+  @Roles(Role.ADMIN, Role.EDITOR, Role.READER)
+  @Get()
+  findAll(
+    // se parara el publish para tener el boolean propio
+    @Query('publish', ParseBoolPipe) publish: boolean,
+    @Query() params: FilterCategoriesDto,
+  ): Promise<object> {
+    //(params, publish, admin)
+    return this.categoriesService.findAll(params, publish, true);
+  }
+
+  @Roles(Role.ADMIN, Role.EDITOR, Role.READER)
   @Get(':id')
   findOne(@Param('id', ParseIntPipe) id: number): Promise<Category> {
-    return this.categoriesService.findOne(id);
+    //(id, admin)
+    return this.categoriesService.findOne(id, true);
   }
 
   @Roles(Role.ADMIN, Role.EDITOR)

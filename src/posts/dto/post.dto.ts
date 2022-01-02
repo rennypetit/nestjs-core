@@ -50,8 +50,4 @@ export class FilterPostsDto {
   @IsOptional()
   @IsString()
   order: Order;
-
-  @IsOptional()
-  @IsBoolean()
-  publish: boolean;
 }
