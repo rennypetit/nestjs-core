@@ -39,7 +39,7 @@ export class PostsController {
     return this.postsService.findOne(id);
   }
 
-  @Roles(Role.ADMIN, Role.COLLABORATOR, Role.EDITOR)
+  @Roles(Role.ADMIN, Role.EDITOR)
   @Post()
   create(
     @Body() createPostDto: CreatePostDto,
@@ -49,7 +49,7 @@ export class PostsController {
     return this.postsService.create(createPostDto, request.user.sub);
   }
 
-  @Roles(Role.ADMIN, Role.COLLABORATOR, Role.EDITOR)
+  @Roles(Role.ADMIN, Role.EDITOR)
   @Patch(':id')
   update(
     @Param('id', ParseIntPipe) id: number,
@@ -60,7 +60,7 @@ export class PostsController {
     return this.postsService.update(id, updatePostDto, request.user.sub);
   }
 
-  @Roles(Role.ADMIN, Role.COLLABORATOR, Role.EDITOR)
+  @Roles(Role.ADMIN, Role.EDITOR)
   @Delete(':id')
   remove(@Param('id', ParseIntPipe) id: number): Promise<PostEntity> {
     return this.postsService.remove(id);

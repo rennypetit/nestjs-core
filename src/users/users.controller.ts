@@ -31,7 +31,7 @@ export class UsersController {
     return this.usersService.findAll(params);
   }
 
-  @Roles(Role.ADMIN, Role.COLLABORATOR, Role.EDITOR, Role.READER)
+  @Roles(Role.ADMIN, Role.EDITOR, Role.READER)
   @Get(':id')
   findOne(@Param('id', ParseIntPipe) id: number): Promise<User> {
     return this.usersService.findOne(id);
@@ -43,7 +43,7 @@ export class UsersController {
     return this.usersService.create(createUserDto);
   }
 
-  @Roles(Role.ADMIN, Role.COLLABORATOR, Role.EDITOR, Role.READER)
+  @Roles(Role.ADMIN, Role.EDITOR, Role.READER)
   @Patch(':id')
   update(
     @Param('id', ParseIntPipe) id: number,

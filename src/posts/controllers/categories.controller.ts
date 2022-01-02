@@ -43,7 +43,7 @@ export class CategoriesController {
     return this.categoriesService.findOne(id);
   }
 
-  @Roles(Role.ADMIN, Role.COLLABORATOR, Role.EDITOR)
+  @Roles(Role.ADMIN, Role.EDITOR)
   @Post()
   create(
     @Body() createCategoryDto: CreateCategoryDto,
@@ -53,7 +53,7 @@ export class CategoriesController {
     return this.categoriesService.create(createCategoryDto, request.user.sub);
   }
 
-  @Roles(Role.ADMIN, Role.COLLABORATOR, Role.EDITOR)
+  @Roles(Role.ADMIN, Role.EDITOR)
   @Patch(':id')
   update(
     @Param('id', ParseIntPipe) id: number,
@@ -68,7 +68,7 @@ export class CategoriesController {
     );
   }
 
-  @Roles(Role.ADMIN, Role.COLLABORATOR, Role.EDITOR)
+  @Roles(Role.ADMIN, Role.EDITOR)
   @Delete(':id')
   remove(@Param('id', ParseIntPipe) id: number): Promise<Category> {
     return this.categoriesService.remove(id);

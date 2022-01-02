@@ -1,8 +1,8 @@
 export enum Role {
   ADMIN = 'admin', // all crud and create users
   EDITOR = 'editor', // all crate crud but not users
-  COLLABORATOR = 'collaborator', // created crud in publish false
-  READER = 'lector', // Only read
+  READER = 'lector', // Only read,
+  SUSPENDED = 'suspended', // Esperando para ser aprobado
 }
 
 export enum Order {
