@@ -17,7 +17,7 @@ export class UsersService {
   ) {}
 
   async findAll(params?: FilterUsersDto): Promise<object> {
-    const { limit = 10, offset = 0, order = 'DESC' } = params;
+    const { limit = 10, offset = 0, order = 'DESC', role = 'admin' } = params;
     if (!Order[order])
       //! si envia un parametro diferente a asc o desc
       throw new ConflictException(`Only uppercase DESC and ASC`);
@@ -26,11 +26,18 @@ export class UsersService {
     const users = await this.usersRepository.find({
       take: limit,
       skip: offset,
+      where: {
+        role,
+      },
       order: {
         id: order,
       },
     });
-    const count = await this.usersRepository.count();
+    const count = await this.usersRepository.count({
+      where: {
+        role,
+      },
+    });
     return { users, count };
   }
 

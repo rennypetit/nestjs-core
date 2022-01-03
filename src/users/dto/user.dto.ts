@@ -58,6 +58,6 @@ export class FilterUsersDto {
   order: Order;
 
   @IsOptional()
-  @IsBoolean()
-  publish: boolean;
+  @IsString()
+  role: Role;
 }
