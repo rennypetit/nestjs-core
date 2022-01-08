@@ -1,4 +1,5 @@
 import { Exclude } from 'class-transformer';
+import { Upload } from 'src/uploads/entities/upload.entity';
 import { User } from 'src/users/entities/user.entity';
 import {
   PrimaryGeneratedColumn,
@@ -47,7 +48,11 @@ export class Category {
   @ManyToMany(() => Post, (post) => post.categories)
   posts: Post[];
 
-  @ManyToOne(() => User, (user) => user.posts)
+  @ManyToOne(() => Upload, (upload) => upload.categories)
+  @JoinColumn({ name: 'upload_id' })
+  upload: Upload;
+
+  @ManyToOne(() => User, (user) => user.categories)
   @JoinColumn({ name: 'user_id' })
   user: User;
 }

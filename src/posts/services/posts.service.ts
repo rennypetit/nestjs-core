@@ -12,6 +12,7 @@ import { Order } from '../posts.model';
 import { Post } from '../entities/post.entity';
 import { Category } from '../entities/category.entity';
 import { User } from 'src/users/entities/user.entity';
+import { Upload } from 'src/uploads/entities/upload.entity';
 
 @Injectable()
 export class PostsService {
@@ -19,8 +20,8 @@ export class PostsService {
     @InjectRepository(Post) private postsRepository: Repository<Post>,
     @InjectRepository(Category)
     private categoriesRepository: Repository<Category>,
-    @InjectRepository(User)
-    private usersRepository: Repository<User>,
+    @InjectRepository(Upload) private uploadsRepository: Repository<Upload>,
+    @InjectRepository(User) private usersRepository: Repository<User>,
   ) {}
 
   async findAll(
@@ -51,7 +52,7 @@ export class PostsService {
 
   async findOne(id: number, admin = false): Promise<Post> {
     const post = await this.postsRepository.findOne({
-      relations: ['user', 'categories'],
+      relations: ['user', 'categories', 'uploads'],
       where: { id },
     });
     //! si no se encuentra el id
@@ -67,7 +68,7 @@ export class PostsService {
     createPostDto: CreatePostDto,
     publish: boolean,
     userId: number,
-  ): Promise<Post> {
+  ): Promise<any> {
     const newPost = this.postsRepository.create(createPostDto);
     const data = await this.findByNameAndSlug(
       createPostDto.name,
@@ -82,6 +83,17 @@ export class PostsService {
         createPostDto.categoriesIds,
       );
       newPost.categories = categories;
+    }
+
+    // relación uploads - post
+
+    if (createPostDto.uploadId) {
+      const upload = await this.uploadsRepository.findOne(
+        createPostDto.uploadId,
+      );
+      const uploadDos = await this.uploadsRepository.findOne(2);
+      newPost.upload = upload;
+      newPost.uploaddos = uploadDos;
     }
 
     // relación user - post

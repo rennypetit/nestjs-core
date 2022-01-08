@@ -8,6 +8,7 @@ import {
   Min,
   IsBoolean,
   IsArray,
+  IsNumber,
 } from 'class-validator';
 import { Order } from '../posts.model';
 export class CreatePostDto {
@@ -30,6 +31,12 @@ export class CreatePostDto {
   @IsNotEmpty()
   @ApiProperty()
   readonly publish: boolean;
+
+  @IsNumber()
+  @IsPositive()
+  @IsNotEmpty()
+  @ApiProperty()
+  readonly uploadId: number;
 
   @IsArray()
   @IsNotEmpty()

@@ -12,6 +12,7 @@ import {
   Req,
   ParseBoolPipe,
 } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 
 import { CreatePostDto, UpdatePostDto, FilterPostsDto } from '../dto/post.dto';
 import { Post as PostEntity } from '../entities/post.entity';
@@ -24,6 +25,7 @@ import { Public } from 'src/auth/decorators/public.decorator';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 
 @UseGuards(JwtAuthGuard, RolesGuard)
+@ApiTags('Posts')
 @Controller('posts')
 export class PostsController {
   constructor(private readonly postsService: PostsService) {}
@@ -64,7 +66,7 @@ export class PostsController {
     @Body() createPostDto: CreatePostDto,
     @Body('publish', ParseBoolPipe) publish: boolean,
     @Req() request,
-  ): Promise<PostEntity> {
+  ): Promise<any> {
     // se obtiene el user sub que es el id por el token
     return this.postsService.create(createPostDto, publish, request.user.sub);
   }

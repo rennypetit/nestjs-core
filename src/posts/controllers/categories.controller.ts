@@ -12,6 +12,7 @@ import {
   Req,
   ParseBoolPipe,
 } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 
 import {
   CreateCategoryDto,
@@ -28,6 +29,7 @@ import { Roles } from 'src/auth/decorators/roles.decorator';
 import { Role } from '../../users/users.model';
 
 @UseGuards(JwtAuthGuard, RolesGuard)
+@ApiTags('Categories')
 @Controller('categories')
 export class CategoriesController {
   constructor(private readonly categoriesService: CategoriesService) {}

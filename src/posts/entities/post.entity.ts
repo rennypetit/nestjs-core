@@ -12,6 +12,7 @@ import {
 } from 'typeorm';
 
 import { Category } from './category.entity';
+import { Upload } from 'src/uploads/entities/upload.entity';
 import { User } from '../../users/entities/user.entity';
 @Entity({ name: 'posts' })
 export class Post {
@@ -57,6 +58,11 @@ export class Post {
     },
   }) // solo en un lado de la relación de muchos a muchos
   categories: Category[];
+
+  @ManyToOne(() => Upload, (upload) => upload.categories)
+  @JoinColumn({ name: 'upload_id' })
+  upload: Upload;
+  uploaddos: Upload;
 
   @ManyToOne(() => User, (user) => user.posts)
   @JoinColumn({ name: 'user_id' })

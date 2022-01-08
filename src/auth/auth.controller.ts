@@ -5,12 +5,14 @@ import {
   UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
-import { Request } from 'express';
+import { ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
+import { Request } from 'express';
 
 import { AuthService } from './auth.service';
 import { User } from '../users/entities/user.entity';
 import { Role } from 'src/users/users.model';
+@ApiTags('Login')
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
