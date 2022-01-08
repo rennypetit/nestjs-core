@@ -1,8 +1,23 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsNotEmpty } from 'class-validator';
+import { IsOptional, IsPositive, IsString, Min } from 'class-validator';
+import { Order } from 'src/posts/posts.model';
 export class CreateUploadDto {
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   @ApiProperty()
-  readonly alt: string;
+  readonly image: object;
+}
+
+export class FilterUploadsDto {
+  @IsOptional()
+  @IsPositive()
+  limit: number;
+
+  @IsOptional()
+  @Min(0)
+  offset: number;
+
+  @IsOptional()
+  @IsString()
+  order: Order;
 }

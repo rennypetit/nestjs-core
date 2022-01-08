@@ -2,26 +2,28 @@ import {
   Controller,
   Get,
   Post,
-  Body,
-  Patch,
   Param,
   Delete,
   UseInterceptors,
   UploadedFile,
-  UnauthorizedException,
   BadRequestException,
+  Query,
+  ParseIntPipe,
 } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
+
 import { UploadsService } from './uploads.service';
-import { CreateUploadDto } from './dto/create-upload.dto';
-import { UpdateUploadDto } from './dto/update-upload.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
+import { Upload } from './entities/upload.entity';
+import { FilterUploadsDto } from './dto/create-upload.dto';
 
+@ApiTags('Posts')
 @Controller('uploads')
 export class UploadsController {
   constructor(private readonly uploadsService: UploadsService) {}
 
-  @Post('upload')
+  @Post('image')
   @UseInterceptors(
     FileInterceptor('file', {
       storage: diskStorage({
@@ -39,31 +41,25 @@ export class UploadsController {
       },
     }),
   )
-  uploadFile(
-    @UploadedFile() file: Express.Multer.File,
-    @Body() createUploadDto: CreateUploadDto,
-  ): string {
+  uploadFile(@UploadedFile() file: Express.Multer.File): Promise<Upload> {
     if (!file) throw new BadRequestException('file is not an image');
-    return this.uploadsService.create(file, createUploadDto);
+    return this.uploadsService.create(file);
   }
 
   @Get()
-  findAll() {
-    return this.uploadsService.findAll();
+  findAll(@Query() params: FilterUploadsDto): Promise<object> {
+    //(params, publish, admin)
+    return this.uploadsService.findAll(params);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.uploadsService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUploadDto: UpdateUploadDto) {
-    return this.uploadsService.update(+id, updateUploadDto);
+  findOne(@Param('id', ParseIntPipe) id: number): Promise<Upload> {
+    //(id, admin)
+    return this.uploadsService.findOne(id);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.uploadsService.remove(+id);
+  remove(@Param('id', ParseIntPipe) id: number): Promise<object> {
+    return this.uploadsService.remove(id);
   }
 }
