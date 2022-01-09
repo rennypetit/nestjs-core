@@ -52,7 +52,7 @@ export class PostsService {
 
   async findOne(id: number, admin = false): Promise<Post> {
     const post = await this.postsRepository.findOne({
-      relations: ['user', 'categories', 'uploads'],
+      relations: ['user', 'categories', 'image'],
       where: { id },
     });
     //! si no se encuentra el id
@@ -64,6 +64,19 @@ export class PostsService {
     //* si todo esta bien
     return post;
   }
+
+  async findOneSlug(slug: string): Promise<Post> {
+    const post = await this.postsRepository.findOne({
+      relations: ['user', 'categories', 'image'],
+      where: { slug, publish: true },
+    });
+    //! si no se encuentra el id
+    if (!post) throw new NotFoundException(`Post with slug ${slug} not found`);
+    //! si la persona no es admin no puede ver post en borrador
+    //* si todo esta bien
+    return post;
+  }
+
   async create(
     createPostDto: CreatePostDto,
     publish: boolean,

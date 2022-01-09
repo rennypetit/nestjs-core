@@ -43,6 +43,12 @@ export class PostsController {
     return this.postsService.findOne(id);
   }
 
+  @Public()
+  @Get('/public/slug/:slug')
+  findOnePublicSlug(@Param('slug') slug: string): Promise<PostEntity> {
+    return this.postsService.findOneSlug(slug);
+  }
+
   //? ALL ADMIN DASHBOARD
   @Roles(Role.ADMIN, Role.EDITOR, Role.READER)
   @Get()

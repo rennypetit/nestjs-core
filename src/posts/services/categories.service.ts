@@ -68,6 +68,19 @@ export class CategoriesService {
     return Category;
   }
 
+  async findOneSlug(slug: string): Promise<Category> {
+    const Category = await this.categoriesRepository.findOne({
+      relations: ['posts', 'user'],
+      where: { slug, publish: true },
+    });
+    //! si no se encuentra el id
+    if (!Category)
+      throw new NotFoundException(`Category with slug ${slug} not found`);
+
+    //* si todo sale bien
+    return Category;
+  }
+
   async create(
     createCategoryDto: CreateCategoryDto,
     publish: boolean,

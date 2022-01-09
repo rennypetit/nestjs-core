@@ -47,6 +47,12 @@ export class CategoriesController {
     return this.categoriesService.findOne(id);
   }
 
+  @Public()
+  @Get('/public/slug/:slug')
+  findOneSlug(@Param('slug') slug: string): Promise<Category> {
+    return this.categoriesService.findOneSlug(slug);
+  }
+
   //? ALL ADMIN DASHBOARD
   @Roles(Role.ADMIN, Role.EDITOR, Role.READER)
   @Get()
