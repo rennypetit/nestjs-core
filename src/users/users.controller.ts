@@ -10,7 +10,7 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 import { UsersService } from './users.service';
 import { CreateUserDto, FilterUsersDto, UpdateUserDto } from './dto/user.dto';
@@ -23,6 +23,7 @@ import { Roles } from 'src/auth/decorators/roles.decorator';
 
 // @UseGuards(JwtAuthGuard, RolesGuard)
 @ApiTags('Users')
+// @ApiBearerAuth()
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}

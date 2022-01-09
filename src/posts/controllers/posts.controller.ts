@@ -12,7 +12,7 @@ import {
   Req,
   ParseBoolPipe,
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 import { CreatePostDto, UpdatePostDto, FilterPostsDto } from '../dto/post.dto';
 import { Post as PostEntity } from '../entities/post.entity';
@@ -26,6 +26,7 @@ import { Roles } from 'src/auth/decorators/roles.decorator';
 
 @UseGuards(JwtAuthGuard, RolesGuard)
 @ApiTags('Posts')
+@ApiBearerAuth()
 @Controller('posts')
 export class PostsController {
   constructor(private readonly postsService: PostsService) {}
