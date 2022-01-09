@@ -11,7 +11,7 @@ import {
   ParseIntPipe,
   UseGuards,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { diskStorage } from 'multer';
 
 import { Role } from 'src/users/users.model';
@@ -19,7 +19,7 @@ import { Roles } from 'src/auth/decorators/roles.decorator';
 import { UploadsService } from './uploads.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Upload } from './entities/upload.entity';
-import { FilterUploadsDto } from './dto/create-upload.dto';
+import { FilterUploadsDto, CreateUploadDto } from './dto/create-upload.dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 
@@ -32,6 +32,18 @@ export class UploadsController {
 
   @Roles(Role.ADMIN, Role.EDITOR)
   @Post('image')
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        file: {
+          type: 'string',
+          format: 'binary',
+        },
+      },
+    },
+  })
   @UseInterceptors(
     FileInterceptor('file', {
       storage: diskStorage({
