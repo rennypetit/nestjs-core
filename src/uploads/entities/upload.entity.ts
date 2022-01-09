@@ -1,3 +1,5 @@
+import { UseGuards } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import {
   PrimaryGeneratedColumn,
   Entity,
@@ -7,9 +9,14 @@ import {
   Column,
 } from 'typeorm';
 import { Exclude } from 'class-transformer';
+
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { Post } from 'src/posts/entities/post.entity';
 import { Category } from 'src/posts/entities/category.entity';
 
+@UseGuards(JwtAuthGuard, RolesGuard)
+@ApiTags('Uploads')
 @Entity({ name: 'uploads' })
 export class Upload {
   @PrimaryGeneratedColumn()
