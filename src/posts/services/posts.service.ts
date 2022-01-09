@@ -87,13 +87,11 @@ export class PostsService {
 
     // relación uploads - post
 
-    if (createPostDto.uploadId) {
+    if (createPostDto.imageId) {
       const upload = await this.uploadsRepository.findOne(
-        createPostDto.uploadId,
+        createPostDto.imageId,
       );
-      const uploadDos = await this.uploadsRepository.findOne(2);
-      newPost.upload = upload;
-      newPost.uploaddos = uploadDos;
+      newPost.image = upload;
     }
 
     // relación user - post

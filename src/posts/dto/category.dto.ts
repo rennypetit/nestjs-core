@@ -7,6 +7,7 @@ import {
   IsPositive,
   Min,
   IsBoolean,
+  IsNumber,
 } from 'class-validator';
 import { Order } from '../posts.model';
 
@@ -21,10 +22,11 @@ export class CreateCategoryDto {
   @ApiProperty()
   readonly slug: string;
 
-  @IsString()
+  @IsNumber()
+  @IsPositive()
   @IsNotEmpty()
   @ApiProperty()
-  readonly file: string;
+  readonly imageId: number;
 
   @IsBoolean()
   @IsNotEmpty()

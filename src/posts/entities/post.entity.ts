@@ -25,9 +25,6 @@ export class Post {
   @Column({ type: 'varchar', unique: true })
   slug: string;
 
-  @Column({ type: 'varchar' })
-  file: string;
-
   @Column({ type: 'boolean' })
   publish: boolean;
 
@@ -60,9 +57,8 @@ export class Post {
   categories: Category[];
 
   @ManyToOne(() => Upload, (upload) => upload.categories)
-  @JoinColumn({ name: 'upload_id' })
-  upload: Upload;
-  uploaddos: Upload;
+  @JoinColumn({ name: 'image_id' })
+  image: Upload;
 
   @ManyToOne(() => User, (user) => user.posts)
   @JoinColumn({ name: 'user_id' })

@@ -22,11 +22,6 @@ export class CreatePostDto {
   @ApiProperty()
   readonly slug: string;
 
-  @IsString()
-  @IsNotEmpty()
-  @ApiProperty()
-  readonly file: string;
-
   @IsBoolean()
   @IsNotEmpty()
   @ApiProperty()
@@ -36,7 +31,7 @@ export class CreatePostDto {
   @IsPositive()
   @IsNotEmpty()
   @ApiProperty()
-  readonly uploadId: number;
+  readonly imageId: number;
 
   @IsArray()
   @IsNotEmpty()

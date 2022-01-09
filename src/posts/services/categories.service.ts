@@ -15,12 +15,14 @@ import {
 import { Category } from '../entities/category.entity';
 import { User } from 'src/users/entities/user.entity';
 import { Order } from '../posts.model';
+import { Upload } from 'src/uploads/entities/upload.entity';
 
 @Injectable()
 export class CategoriesService {
   constructor(
     @InjectRepository(Category)
     private categoriesRepository: Repository<Category>,
+    @InjectRepository(Upload) private uploadsRepository: Repository<Upload>,
     @InjectRepository(User)
     private usersRepository: Repository<User>,
   ) {}
@@ -78,6 +80,15 @@ export class CategoriesService {
     );
     //! si el nombre o slug ya están declarados
     if (data) throw new ConflictException(`Name or slug existent`);
+
+    // relación uploads - post
+
+    if (createCategoryDto.imageId) {
+      const upload = await this.uploadsRepository.findOne(
+        createCategoryDto.imageId,
+      );
+      newCategory.image = upload;
+    }
 
     // relación user - categories
     if (typeof userId === 'number') {
