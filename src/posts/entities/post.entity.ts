@@ -19,10 +19,28 @@ export class Post {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ type: 'varchar', unique: true })
+  @Column({ nullable: true, type: 'text', name: 'seo_title' })
+  seoTitle: string;
+
+  @Column({ nullable: true, type: 'text', name: 'seo_description' })
+  seoDescription: string;
+
+  @Column({ nullable: true, type: 'text', name: 'seo_keywords' })
+  seoKeywords: string;
+
+  @Column({ nullable: true, type: 'text', name: 'seo_canonical' })
+  seoCanonical: string;
+
+  @Column({ nullable: true, type: 'text', name: 'seo_image' })
+  seoImage: string;
+
+  @Column({ nullable: true, type: 'text', name: 'seo_json_ld' })
+  seoJsonLd: string;
+
+  @Column({ type: 'text', unique: true })
   name: string;
 
-  @Column({ type: 'varchar', unique: true })
+  @Column({ type: 'text', unique: true })
   slug: string;
 
   @Column({ type: 'boolean' })
