@@ -41,6 +41,9 @@ export class Category {
   @Column({ type: 'text', unique: true })
   slug: string;
 
+  @Column({ type: 'text', name: 'image_alt' })
+  imageAlt: string;
+
   @Column({ type: 'boolean' })
   publish: boolean;
 

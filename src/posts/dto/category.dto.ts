@@ -9,7 +9,6 @@ import {
   IsBoolean,
   IsNumber,
   IsUrl,
-  IsObject,
 } from 'class-validator';
 import { Order } from '../posts.model';
 
@@ -58,6 +57,11 @@ export class CreateCategoryDto {
   @IsNotEmpty()
   @ApiProperty()
   readonly imageId: number;
+
+  @IsNotEmpty()
+  @IsString()
+  @ApiProperty()
+  readonly imageAlt: string;
 
   @IsBoolean()
   @IsNotEmpty()

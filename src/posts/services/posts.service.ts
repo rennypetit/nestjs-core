@@ -95,15 +95,24 @@ export class PostsService {
       const categories = await this.categoriesRepository.findByIds(
         createPostDto.categoriesIds,
       );
+      //! si las categorías no son validas
+      if (categories.length === 0)
+        throw new NotFoundException(
+          `Categories with ids ${createPostDto.categoriesIds} not found`,
+        );
       newPost.categories = categories;
     }
 
     // relación uploads - post
-
     if (createPostDto.imageId) {
       const upload = await this.uploadsRepository.findOne(
         createPostDto.imageId,
       );
+      //! si la imagen no es valida
+      if (!upload)
+        throw new NotFoundException(
+          `Image with ID ${createPostDto.imageId} not found`,
+        );
       newPost.image = upload;
     }
 
@@ -142,7 +151,25 @@ export class PostsService {
       const categories = await this.categoriesRepository.findByIds(
         updatePostDto.categoriesIds,
       );
+      //! si las categorías no son validas
+      if (categories.length === 0)
+        throw new NotFoundException(
+          `Categories with ids ${updatePostDto.categoriesIds} not found`,
+        );
       post.categories = categories;
+    }
+
+    // relación uploads - post
+    if (updatePostDto.imageId) {
+      const upload = await this.uploadsRepository.findOne(
+        updatePostDto.imageId,
+      );
+      //! si la imagen no es valida
+      if (!upload)
+        throw new NotFoundException(
+          `Image with ID ${updatePostDto.imageId} not found`,
+        );
+      post.image = upload;
     }
 
     // relación user - post

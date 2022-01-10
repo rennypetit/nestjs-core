@@ -95,11 +95,15 @@ export class CategoriesService {
     if (data) throw new ConflictException(`Name or slug existent`);
 
     // relación uploads - post
-
     if (createCategoryDto.imageId) {
       const upload = await this.uploadsRepository.findOne(
         createCategoryDto.imageId,
       );
+      //! si la imagen no es valida
+      if (!upload)
+        throw new NotFoundException(
+          `Image with ID ${createCategoryDto.imageId} not found`,
+        );
       newCategory.image = upload;
     }
 
@@ -122,9 +126,9 @@ export class CategoriesService {
     publish: boolean,
     userId: number,
   ) {
-    const Category = await this.categoriesRepository.findOne(id);
+    const category = await this.categoriesRepository.findOne(id);
     //! si el Category no existe
-    if (!Category)
+    if (!category)
       throw new NotFoundException(`Category with ID ${id} not found`);
 
     const data = await this.findByNameAndSlug(
@@ -134,18 +138,31 @@ export class CategoriesService {
     //! si el nombre o slug ya están declarados
     if (data) throw new ConflictException(`Name or slug existent`);
 
+    // relación uploads - post
+    if (updateCategoryDto.imageId) {
+      const upload = await this.uploadsRepository.findOne(
+        updateCategoryDto.imageId,
+      );
+      //! si la imagen no es valida
+      if (!upload)
+        throw new NotFoundException(
+          `Image with ID ${updateCategoryDto.imageId} not found`,
+        );
+      category.image = upload;
+    }
+
     // relación user - categories
     if (typeof userId === 'number') {
       const user = await this.usersRepository.findOne(userId);
-      Category.user = user;
+      category.user = user;
     } else throw new ConflictException(`userId no valid`);
 
     // se implementa esto para que se puede leer la propiedad boolean de manera correcta
-    Category.publish = publish;
+    category.publish = publish;
 
     //* si todo sale bien
-    this.categoriesRepository.merge(Category, updateCategoryDto);
-    return this.categoriesRepository.save(Category);
+    this.categoriesRepository.merge(category, updateCategoryDto);
+    return this.categoriesRepository.save(category);
   }
 
   async remove(id: number): Promise<any> {

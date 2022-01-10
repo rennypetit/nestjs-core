@@ -64,6 +64,11 @@ export class CreatePostDto {
   @ApiProperty()
   readonly imageId: number;
 
+  @IsNotEmpty()
+  @IsString()
+  @ApiProperty()
+  readonly imageAlt: string;
+
   @IsArray()
   @IsNotEmpty()
   @ApiProperty()
