@@ -29,8 +29,9 @@ export class Category {
   @Column({ nullable: true, type: 'text', name: 'seo_canonical' })
   seoCanonical: string;
 
-  @Column({ nullable: true, type: 'text', name: 'seo_image' })
-  seoImage: string;
+  @ManyToOne(() => Upload, (upload) => upload.categories)
+  @JoinColumn({ name: 'seo_image_id' })
+  seoImage: Upload;
 
   @Column({ nullable: true, type: 'text', name: 'seo_json_ld' })
   seoJsonLd: string;

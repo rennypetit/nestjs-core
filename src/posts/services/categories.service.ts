@@ -15,16 +15,16 @@ import {
 import { Category } from '../entities/category.entity';
 import { User } from 'src/users/entities/user.entity';
 import { Order } from '../posts.model';
-import { Upload } from 'src/uploads/entities/upload.entity';
+import { UploadsService } from '../../uploads/uploads.service';
 
 @Injectable()
 export class CategoriesService {
   constructor(
     @InjectRepository(Category)
     private categoriesRepository: Repository<Category>,
-    @InjectRepository(Upload) private uploadsRepository: Repository<Upload>,
     @InjectRepository(User)
     private usersRepository: Repository<User>,
+    private uploadsService: UploadsService,
   ) {}
 
   async findAll(
@@ -96,14 +96,10 @@ export class CategoriesService {
 
     // relación uploads - post
     if (createCategoryDto.imageId) {
-      const upload = await this.uploadsRepository.findOne(
+      //! si la imagen no es valida upload da error desde uploads service
+      const upload = await this.uploadsService.findOne(
         createCategoryDto.imageId,
       );
-      //! si la imagen no es valida
-      if (!upload)
-        throw new NotFoundException(
-          `Image with ID ${createCategoryDto.imageId} not found`,
-        );
       newCategory.image = upload;
     }
 
@@ -140,14 +136,10 @@ export class CategoriesService {
 
     // relación uploads - post
     if (updateCategoryDto.imageId) {
-      const upload = await this.uploadsRepository.findOne(
+      //! si la imagen no es valida upload da error desde uploads service
+      const upload = await this.uploadsService.findOne(
         updateCategoryDto.imageId,
       );
-      //! si la imagen no es valida
-      if (!upload)
-        throw new NotFoundException(
-          `Image with ID ${updateCategoryDto.imageId} not found`,
-        );
       category.image = upload;
     }
 

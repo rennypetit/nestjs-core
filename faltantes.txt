@@ -1,0 +1,3 @@
+* validar publish para edicion - posts,categorias
+* validar imageId de seo
+* recuperar contraseña del usuario

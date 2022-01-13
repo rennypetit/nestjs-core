@@ -12,7 +12,7 @@ import { Order } from '../posts.model';
 import { Post } from '../entities/post.entity';
 import { Category } from '../entities/category.entity';
 import { User } from 'src/users/entities/user.entity';
-import { Upload } from 'src/uploads/entities/upload.entity';
+import { UploadsService } from 'src/uploads/uploads.service';
 
 @Injectable()
 export class PostsService {
@@ -20,8 +20,8 @@ export class PostsService {
     @InjectRepository(Post) private postsRepository: Repository<Post>,
     @InjectRepository(Category)
     private categoriesRepository: Repository<Category>,
-    @InjectRepository(Upload) private uploadsRepository: Repository<Upload>,
     @InjectRepository(User) private usersRepository: Repository<User>,
+    private uploadsService: UploadsService,
   ) {}
 
   async findAll(
@@ -105,14 +105,8 @@ export class PostsService {
 
     // relación uploads - post
     if (createPostDto.imageId) {
-      const upload = await this.uploadsRepository.findOne(
-        createPostDto.imageId,
-      );
-      //! si la imagen no es valida
-      if (!upload)
-        throw new NotFoundException(
-          `Image with ID ${createPostDto.imageId} not found`,
-        );
+      //! si la imagen no es valida upload da error desde uploads service
+      const upload = await this.uploadsService.findOne(createPostDto.imageId);
       newPost.image = upload;
     }
 
@@ -161,9 +155,7 @@ export class PostsService {
 
     // relación uploads - post
     if (updatePostDto.imageId) {
-      const upload = await this.uploadsRepository.findOne(
-        updatePostDto.imageId,
-      );
+      const upload = await this.uploadsService.findOne(updatePostDto.imageId);
       //! si la imagen no es valida
       if (!upload)
         throw new NotFoundException(

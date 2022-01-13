@@ -39,12 +39,15 @@ export class UploadsService {
     return { uploads, count };
   }
 
-  async findOne(id: number, admin = false) {
+  async findOne(id: number) {
     const Upload = await this.uploadsRepository.findOne({
       where: { id },
     });
     //! si no se encuentra el id
-    if (!Upload) throw new NotFoundException(`Upload with ID ${id} not found`);
+    if (!Upload)
+      throw new NotFoundException(
+        `desde uploads Upload with ID ${id} not found`,
+      );
 
     return Upload;
   }
