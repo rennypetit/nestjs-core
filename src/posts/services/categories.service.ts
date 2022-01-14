@@ -93,6 +93,15 @@ export class CategoriesService {
     //! si el nombre o slug ya están declarados
     if (data) throw new ConflictException(`Name or slug existent`);
 
+    // relación uploads - post -seo
+    if (createCategoryDto.seoImageId) {
+      //! si la imagen no es valida upload da error desde uploads service
+      const upload = await this.uploadsService.findOne(
+        createCategoryDto.seoImageId,
+      );
+      newCategory.seoImage = upload;
+    }
+
     // relación uploads - post
     if (createCategoryDto.imageId) {
       //! si la imagen no es valida upload da error desde uploads service
@@ -132,6 +141,15 @@ export class CategoriesService {
     );
     //! si el nombre o slug ya están declarados
     if (data) throw new ConflictException(`Name or slug existent`);
+
+    // relación uploads - post
+    if (updateCategoryDto.seoImageId) {
+      //! si la imagen no es valida upload da error desde uploads service
+      const upload = await this.uploadsService.findOne(
+        updateCategoryDto.seoImageId,
+      );
+      category.seoImage = upload;
+    }
 
     // relación uploads - post
     if (updateCategoryDto.imageId) {

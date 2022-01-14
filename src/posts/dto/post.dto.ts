@@ -10,7 +10,6 @@ import {
   IsArray,
   IsNumber,
   IsUrl,
-  IsObject,
 } from 'class-validator';
 import { Order } from '../posts.model';
 export class CreatePostDto {
@@ -34,8 +33,9 @@ export class CreatePostDto {
   @ApiProperty()
   readonly seoCanonical: string;
 
-  @IsOptional()
-  @IsString()
+  @IsNumber()
+  @IsPositive()
+  @IsNotEmpty()
   @ApiProperty()
   readonly seoImageId: number;
 

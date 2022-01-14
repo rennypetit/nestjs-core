@@ -44,10 +44,7 @@ export class UploadsService {
       where: { id },
     });
     //! si no se encuentra el id
-    if (!Upload)
-      throw new NotFoundException(
-        `desde uploads Upload with ID ${id} not found`,
-      );
+    if (!Upload) throw new NotFoundException(`Upload with ID ${id} not found`);
 
     return Upload;
   }

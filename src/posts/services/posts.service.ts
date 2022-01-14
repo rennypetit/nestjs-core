@@ -103,6 +103,15 @@ export class PostsService {
       newPost.categories = categories;
     }
 
+    // relación uploads - post- seo
+    if (createPostDto.seoImageId) {
+      //! si la imagen no es valida upload da error desde uploads service
+      const upload = await this.uploadsService.findOne(
+        createPostDto.seoImageId,
+      );
+      newPost.seoImage = upload;
+    }
+
     // relación uploads - post
     if (createPostDto.imageId) {
       //! si la imagen no es valida upload da error desde uploads service
@@ -151,6 +160,15 @@ export class PostsService {
           `Categories with ids ${updatePostDto.categoriesIds} not found`,
         );
       post.categories = categories;
+    }
+
+    // relación uploads - post- seo
+    if (updatePostDto.seoImageId) {
+      //! si la imagen no es valida upload da error desde uploads service
+      const upload = await this.uploadsService.findOne(
+        updatePostDto.seoImageId,
+      );
+      post.seoImage = upload;
     }
 
     // relación uploads - post
