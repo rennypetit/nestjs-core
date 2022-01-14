@@ -52,6 +52,17 @@ export class UsersService {
     return user;
   }
 
+  // para los otros servicios y no devolver relaciones
+  async findOneExternal(id: number): Promise<User> {
+    const user = await this.usersRepository.findOne({
+      where: { id },
+    });
+    //! si no se encuentra el id
+    if (!user) throw new NotFoundException(`User with ID ${id} not found`);
+    //* si todo esta bien
+    return user;
+  }
+
   async create(createUserDto: CreateUserDto) {
     const newUser = this.usersRepository.create(createUserDto);
     const data = await this.findByEmail(createUserDto.email);

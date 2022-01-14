@@ -11,8 +11,8 @@ import { CreatePostDto, UpdatePostDto, FilterPostsDto } from '../dto/post.dto';
 import { Order } from '../posts.model';
 import { Post } from '../entities/post.entity';
 import { Category } from '../entities/category.entity';
-import { User } from 'src/users/entities/user.entity';
 import { UploadsService } from 'src/uploads/uploads.service';
+import { UsersService } from '../../users/users.service';
 
 @Injectable()
 export class PostsService {
@@ -20,7 +20,7 @@ export class PostsService {
     @InjectRepository(Post) private postsRepository: Repository<Post>,
     @InjectRepository(Category)
     private categoriesRepository: Repository<Category>,
-    @InjectRepository(User) private usersRepository: Repository<User>,
+    private usersService: UsersService,
     private uploadsService: UploadsService,
   ) {}
 
@@ -112,7 +112,7 @@ export class PostsService {
 
     // relación user - post
     if (typeof userId === 'number') {
-      const user = await this.usersRepository.findOne(userId);
+      const user = await this.usersService.findOneExternal(userId);
       newPost.user = user;
     } else throw new ConflictException(`userId no valid`);
 
@@ -166,7 +166,7 @@ export class PostsService {
 
     // relación user - post
     if (typeof userId === 'number') {
-      const user = await this.usersRepository.findOne(userId);
+      const user = await this.usersService.findOneExternal(userId);
       post.user = user;
     } else throw new ConflictException(`userId no valid`);
 

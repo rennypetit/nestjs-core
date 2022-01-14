@@ -13,8 +13,8 @@ import {
   FilterCategoriesDto,
 } from '../dto/category.dto';
 import { Category } from '../entities/category.entity';
-import { User } from 'src/users/entities/user.entity';
 import { Order } from '../posts.model';
+import { UsersService } from '../../users/users.service';
 import { UploadsService } from '../../uploads/uploads.service';
 
 @Injectable()
@@ -22,8 +22,7 @@ export class CategoriesService {
   constructor(
     @InjectRepository(Category)
     private categoriesRepository: Repository<Category>,
-    @InjectRepository(User)
-    private usersRepository: Repository<User>,
+    private usersService: UsersService,
     private uploadsService: UploadsService,
   ) {}
 
@@ -105,7 +104,7 @@ export class CategoriesService {
 
     // relación user - categories
     if (typeof userId === 'number') {
-      const user = await this.usersRepository.findOne(userId);
+      const user = await this.usersService.findOneExternal(userId);
       newCategory.user = user;
     } else throw new ConflictException(`userId no valid`);
 
@@ -145,7 +144,7 @@ export class CategoriesService {
 
     // relación user - categories
     if (typeof userId === 'number') {
-      const user = await this.usersRepository.findOne(userId);
+      const user = await this.usersService.findOneExternal(userId);
       category.user = user;
     } else throw new ConflictException(`userId no valid`);
 
