@@ -23,6 +23,7 @@ import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { Public } from 'src/auth/decorators/public.decorator';
 import { Roles } from 'src/auth/decorators/roles.decorator';
+import { ParseBooleanPipe } from 'src/common/parse-boolean.pipe';
 
 @UseGuards(JwtAuthGuard, RolesGuard)
 @ApiTags('Posts')
@@ -83,15 +84,15 @@ export class PostsController {
   update(
     @Param('id', ParseIntPipe) id: number,
     @Body() updatePostDto: UpdatePostDto,
-    @Body('publish', ParseBoolPipe) publish: boolean,
     @Req() request,
+    @Body('publish', ParseBooleanPipe) publish?: boolean,
   ): Promise<PostEntity> {
     // se obtiene el user sub que es el id por el token
     return this.postsService.update(
       id,
       updatePostDto,
-      publish,
       request.user.sub,
+      publish,
     );
   }
 

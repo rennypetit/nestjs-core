@@ -26,6 +26,7 @@ import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { Public } from 'src/auth/decorators/public.decorator';
 import { Roles } from 'src/auth/decorators/roles.decorator';
+import { ParseBooleanPipe } from 'src/common/parse-boolean.pipe';
 import { Role } from '../../users/users.model';
 
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -93,16 +94,16 @@ export class CategoriesController {
   update(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateCategoryDto: UpdateCategoryDto,
-    @Body('publish', ParseBoolPipe) publish: boolean,
-    // se parara el publish para tener el boolean propio
     @Req() request,
+    // se parara el publish para tener el boolean propio
+    @Body('publish', ParseBooleanPipe) publish?: boolean,
   ): Promise<Category> {
     // se obtiene el user sub que es el id por el token
     return this.categoriesService.update(
       id,
       updateCategoryDto,
-      publish,
       request.user.sub,
+      publish,
     );
   }
 

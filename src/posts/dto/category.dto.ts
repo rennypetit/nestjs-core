@@ -33,9 +33,9 @@ export class CreateCategoryDto {
   @ApiProperty()
   readonly seoCanonical: string;
 
+  @IsOptional()
   @IsNumber()
   @IsPositive()
-  @IsNotEmpty()
   @ApiProperty()
   readonly seoImageId: number;
 

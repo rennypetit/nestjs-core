@@ -127,8 +127,8 @@ export class CategoriesService {
   async update(
     id: number,
     updateCategoryDto: UpdateCategoryDto,
-    publish: boolean,
     userId: number,
+    publish?: boolean,
   ) {
     const category = await this.categoriesRepository.findOne(id);
     //! si el Category no existe

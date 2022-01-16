@@ -135,8 +135,8 @@ export class PostsService {
   async update(
     id: number,
     updatePostDto: UpdatePostDto,
-    publish: boolean,
     userId: number,
+    publish?: boolean,
   ): Promise<Post> {
     const post = await this.postsRepository.findOne(id);
     //! si el post no existe
